@@ -83,4 +83,4 @@ jobs:
           file_path: lol/jira.json
       - name: Print JSON
         run:
-          echo ${{ steps.readJson.outputs }}
+          echo ${{ steps.readJson.outputs.value }}
