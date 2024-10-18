@@ -78,9 +78,9 @@ jobs:
           regex: false
       - name: Read JSON
         id: readJson
-        uses: ActionsTools/read-json-action@main
+        uses: zoexx/github-action-json-file-properties@release
         with:
           file_path: lol/jira.json
       - name: Print JSON
         run:
-          echo ${{ steps.readJson.outputs.value }}
+          echo ${{ toJSON(steps.readJson.outputs) }}
