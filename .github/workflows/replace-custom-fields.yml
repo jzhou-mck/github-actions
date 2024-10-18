@@ -86,3 +86,6 @@ jobs:
           JSON_FILE: ${{ toJSON(steps.readJson.outputs) }}
         run: |
           echo "JSON_FILE: $(jq -r -c '.' <<< "$JSON_FILE")"
+      - name: Print JSON
+        run: |
+          echo "$(cat lol/jira.json)"
