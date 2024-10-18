@@ -1,0 +1,86 @@
+name: Replace JSON custom fields
+on:
+  workflow_dispatch:
+    inputs:
+      profile:
+        default: all
+        type: choice
+        description:
+        options:
+          - all
+          - lol
+          - omegalul
+
+jobs:
+  getProfiles:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.selectedProfiles.outputs.profilesToRun || steps.allProfiles.outputs.profilesToRun }}
+    steps:
+      - name: Get profile list
+        id: selectedProfiles
+        if: ${{ inputs.profile == 'all' }}
+        run: |
+          echo "profilesToRun=[\"lol\", \"omegalul\"]" >> $GITHUB_OUTPUT
+      - name: Get all profiles
+        id: allProfiles
+        if: ${{ inputs.profile != 'all' }}
+        run: |
+          echo "profilesToRun=[\"${{ inputs.profile }}\"]" >> $GITHUB_OUTPUT
+      - name: Log selected profiles
+        run: echo ${{ steps.selectedProfiles.outputs.profilesToRun || steps.allProfiles.outputs.profilesToRun }}
+
+  getMappings:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.setup.outputs.matrix }}
+    steps:
+      - name: Setup
+        id: setup
+        env:
+          CONFIG: >-
+            [
+              {
+                "jiraCustomFieldId": "customfield_1",
+                "jiraCustomFieldName": "field 1"
+              },
+              {
+                "jiraCustomFieldId": "customfield_2",
+                "jiraCustomFieldName": "field 2"
+              }
+            ]
+        run: echo "matrix=$(jq -r -c . <<< "$CONFIG")" >> $GITHUB_OUTPUT
+      - name: Check
+        run: jq . <<< '${{ steps.setup.outputs.matrix }}'
+
+  replaceCustomFields:
+    needs: [getProfiles]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include: ${{ fromJSON(needs.getMappings.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Log field mappings
+        env:
+          JIRA_CUSTOM_FIELD_ID: ${{ fromJSON(toJSON(matrix)).jiraCustomFieldId }}
+          JIRA_CUSTOM_FIELD_NAME: ${{ fromJSON(toJSON(matrix)).jiraCustomFieldName }}
+        run: |
+          echo "JIRA_CUSTOM_FIELD_ID: [$JIRA_CUSTOM_FIELD_ID]"
+          echo "JIRA_CUSTOM_FIELD_NAME: [$JIRA_CUSTOM_FIELD_NAME]"
+      - name: Replace JSON fields
+        id: replaceJsonFields
+        uses: jacobtomlinson/gha-find-replace@v3
+        with:
+          find: $JIRA_CUSTOM_FIELD_NAME
+          replace: $JIRA_CUSTOM_FIELD_ID
+          include: "**jira.json"
+          regex: false
+      - name: Read JSON
+        id: readJson
+        uses: ActionsTools/read-json-action@main
+        with:
+          file_path: ${{ matrix.value }}/jira.json
+      - name: Print JSON
+        run:
+          echo ${{ steps.readJson.outputs }}
