@@ -82,5 +82,7 @@ jobs:
         with:
           file_path: lol/jira.json
       - name: Print JSON
+        env:
+          JSON_FILE: ${{ toJSON(steps.readJson.outputs) }}
         run:
-          echo ${{ toJSON(steps.readJson.outputs) }}
+          echo "JSON_FILE: $(jq -r -c '.' <<< "JSON_FILE")"
