@@ -84,5 +84,5 @@ jobs:
       - name: Print JSON
         env:
           JSON_FILE: ${{ toJSON(steps.readJson.outputs) }}
-        run:
+        run: |
           echo "JSON_FILE: $(jq -r -c '.' <<< "JSON_FILE")"
