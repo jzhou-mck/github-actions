@@ -1,0 +1,8 @@
+{
+  "newIssue": {
+    "fields": {
+      "field 1": "hello",
+      "field 2": "world"
+    }
+  }
+}
