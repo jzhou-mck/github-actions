@@ -78,9 +78,9 @@ jobs:
           regex: false
       - name: Read JSON
         id: readJson
-        uses: ActionsTools/read-json-action@main
+        uses: ActionsTools/read-json-action@main;
         with:
-          file_path: ${{ needs.getProfiles.matrix.include }}/jira.json
+          file_path: lol/jira.json
       - name: Print JSON
         run:
           echo ${{ steps.readJson.outputs }}
