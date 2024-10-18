@@ -72,15 +72,15 @@ jobs:
         id: replaceJsonFields
         uses: jacobtomlinson/gha-find-replace@v3
         with:
-          find: $JIRA_CUSTOM_FIELD_NAME
-          replace: $JIRA_CUSTOM_FIELD_ID
+          find: ${{ fromJSON(toJSON(matrix)).jiraCustomFieldName }}
+          replace: ${{ fromJSON(toJSON(matrix)).jiraCustomFieldId }}
           include: "**jira.json"
           regex: false
       - name: Read JSON
         id: readJson
         uses: ActionsTools/read-json-action@main
         with:
-          file_path: ${{ matrix.value }}/jira.json
+          file_path: ${{ needs.getProfiles.matrix.include }}/jira.json
       - name: Print JSON
         run:
           echo ${{ steps.readJson.outputs }}
