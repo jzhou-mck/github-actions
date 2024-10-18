@@ -17,14 +17,14 @@ jobs:
     outputs:
       matrix: ${{ steps.selectedProfiles.outputs.profilesToRun || steps.allProfiles.outputs.profilesToRun }}
     steps:
-      - name: Get profile list
+      - name: Get selected profile
         id: selectedProfiles
-        if: ${{ inputs.profile == 'all' }}
+        if: ${{ inputs.profile != 'all' }}
         run: |
           echo "profilesToRun=[\"lol\", \"omegalul\"]" >> $GITHUB_OUTPUT
       - name: Get all profiles
         id: allProfiles
-        if: ${{ inputs.profile != 'all' }}
+        if: ${{ inputs.profile == 'all' }}
         run: |
           echo "profilesToRun=[\"${{ inputs.profile }}\"]" >> $GITHUB_OUTPUT
       - name: Log selected profiles
@@ -54,7 +54,7 @@ jobs:
         run: jq . <<< '${{ steps.setup.outputs.matrix }}'
 
   replaceCustomFields:
-    needs: [getProfiles]
+    needs: [getProfiles, getMappings]
     runs-on: ubuntu-latest
     strategy:
       matrix:
