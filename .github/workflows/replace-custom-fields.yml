@@ -91,7 +91,7 @@ jobs:
           echo "$(cat lol/jira.json)"
 
   replaceCustomFieldsWithBash:
-    if: input.replaceMethodBash == true
+    if: inputs.replaceMethodBash == true
     needs: [getProfiles]
     runs-on: ubuntu-latest
     strategy:
