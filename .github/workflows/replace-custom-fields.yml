@@ -97,7 +97,7 @@ jobs:
               plain_text=$(echo "$line" | cut -d= -f1)
               jira_custom_id=$(echo "$line" | cut -d= -f2)
               echo "Replacing $plain_text with $jira_custom_id"
-              sed -i -e "s/$plain_text/$jira_custom_id/g" [$JIRA_JSON_FILE]
+              sed -i -e "s/$plain_text/$jira_custom_id/g" $JIRA_JSON_FILE
             else
               echo "Comment detected, skipping this line."
             fi
