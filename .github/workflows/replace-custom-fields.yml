@@ -115,4 +115,4 @@ jobs:
           done < custom-field-mappings.txt
       - name: Print JSON
         run: |
-          echo "cat $JIRA_JSON_FILE"
+          cat $JIRA_JSON_FILE
