@@ -87,6 +87,7 @@ jobs:
       matrix:
         value: ${{ fromJSON(needs.getProfiles.outputs.matrix) }}
     steps:
+      - uses: actions/checkout@v2
       - name: Replace custom fields
         run: | 
           while read -r line; do
