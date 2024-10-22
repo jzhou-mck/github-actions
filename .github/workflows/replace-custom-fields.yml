@@ -3,13 +3,21 @@ on:
   workflow_dispatch:
     inputs:
       profile:
+        description: 'Select profile'
         default: all
         type: choice
-        description:
         options:
           - all
           - lol
           - omegalul
+      replaceMethodAction:
+        description: 'Use find replace Action'
+        default: false
+        type: boolean
+      replaceMethodBash:
+        description: 'Use bash script replace'
+        default: true
+        type: boolean
 
 jobs:
   getProfiles:
@@ -31,6 +39,7 @@ jobs:
         run: echo ${{ steps.selectedProfiles.outputs.profilesToRun || steps.allProfiles.outputs.profilesToRun }}
 
   getMappings:
+    if: inputs.replaceMethodAction == true
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.setup.outputs.matrix }}
@@ -54,6 +63,7 @@ jobs:
         run: jq . <<< '${{ steps.setup.outputs.matrix }}'
 
   replaceCustomFields:
+    if: inputs.replaceMethodAction == true
     needs: [getProfiles, getMappings]
     runs-on: ubuntu-latest
     strategy:
@@ -81,6 +91,7 @@ jobs:
           echo "$(cat lol/jira.json)"
 
   replaceCustomFieldsWithBash:
+    if: input.replaceMethodBash == true
     needs: [getProfiles]
     runs-on: ubuntu-latest
     strategy:
@@ -102,7 +113,6 @@ jobs:
               echo "Comment detected, skipping this line."
             fi
           done < custom-field-mappings.txt
-          - name: Print JSON
       - name: Print JSON
         run: |
-          echo "$(cat lol/jira.json)"
+          echo "$(cat $JIRA_JSON_FILE)"
