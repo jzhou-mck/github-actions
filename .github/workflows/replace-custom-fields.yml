@@ -97,11 +97,11 @@ jobs:
     strategy:
       matrix:
         value: ${{ fromJSON(needs.getProfiles.outputs.matrix) }}
+    env:
+      JIRA_JSON_FILE: "${{ matrix.value }}/jira.json"
     steps:
       - uses: actions/checkout@v2
       - name: Replace custom fields
-        env:
-          JIRA_JSON_FILE: "${{ matrix.value }}/jira.json"
         run: |
           while read -r line; do
             if [[ $(echo "$line" | cut -b1) != "#" ]]; then
@@ -115,5 +115,4 @@ jobs:
           done < custom-field-mappings.txt
       - name: Print JSON
         run: |
-          echo $JIRA_JSON_FILE
-          echo $(cat $JIRA_JSON_FILE)
+          echo "$(cat $JIRA_JSON_FILE)"
