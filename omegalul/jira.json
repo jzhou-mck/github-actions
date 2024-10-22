@@ -2,7 +2,10 @@
   "newIssue": {
     "fields": {
       "field 1": "hello",
-      "field 2": "world"
+      "field 2": "darkness",
+      "field 3": "my",
+      "field 4": "old",
+      "field 5": "friend"
     }
   }
 }

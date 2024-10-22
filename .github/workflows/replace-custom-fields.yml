@@ -76,16 +76,30 @@ jobs:
           replace: ${{ fromJSON(toJSON(matrix)).jiraCustomFieldId }}
           include: "**jira.json"
           regex: false
-      - name: Read JSON
-        id: readJson
-        uses: zoexx/github-action-json-file-properties@release
-        with:
-          file_path: lol/jira.json
       - name: Print JSON
-        env:
-          JSON_FILE: ${{ toJSON(steps.readJson.outputs) }}
         run: |
-          echo "JSON_FILE: $(jq -r -c '.' <<< "$JSON_FILE")"
+          echo "$(cat lol/jira.json)"
+
+  replaceCustomFieldsWithBash:
+    needs: [getProfiles]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        value: ${{ fromJSON(needs.getProfiles.outputs.matrix) }}
+    steps:
+      - name: Replace custom fields
+        run: | 
+          while read -r line; do
+            if [[ $(echo "$line" | cut -b1) != "#" ]]; then
+              plain_text=$(echo "$line" | cut -d= -f1)
+              jira_custom_id=$(echo "$line" | cut -d= -f2)
+              echo "Replacing $plain_text with $jira_custom_id"
+              sed -i -e "s/$plain_text/$jira_custom_id/g" renovate-replace.json
+            else
+              echo "Comment detected, skipping this line."
+            fi
+          done < custom-field-mappings.txt
+          - name: Print JSON
       - name: Print JSON
         run: |
           echo "$(cat lol/jira.json)"
