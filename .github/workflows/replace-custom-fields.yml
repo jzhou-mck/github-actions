@@ -21,12 +21,12 @@ jobs:
         id: selectedProfiles
         if: ${{ inputs.profile != 'all' }}
         run: |
-          echo "profilesToRun=[\"lol\", \"omegalul\"]" >> $GITHUB_OUTPUT
+          echo "profilesToRun=[\"${{ inputs.profile }}\"]" >> $GITHUB_OUTPUT
       - name: Get all profiles
         id: allProfiles
         if: ${{ inputs.profile == 'all' }}
         run: |
-          echo "profilesToRun=[\"${{ inputs.profile }}\"]" >> $GITHUB_OUTPUT
+          echo "profilesToRun=[\"lol\", \"omegalul\"]" >> $GITHUB_OUTPUT
       - name: Log selected profiles
         run: echo ${{ steps.selectedProfiles.outputs.profilesToRun || steps.allProfiles.outputs.profilesToRun }}
 
