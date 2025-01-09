@@ -9,4 +9,5 @@ world=19403
 darkness=83493
 my=38294
 old=10345
+
 friend=48573
